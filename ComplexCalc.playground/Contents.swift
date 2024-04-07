@@ -28,6 +28,101 @@ print("Welcome back to the UW Calculator")
 //: IMPORTANT: If any tests are commented out, you will be graded a zero (0)! You should never be in the habit of eliminating tests to make the code pass.
 //:
 class Calculator {
+    
+    func add(lhs: Int, rhs: Int) -> Int {
+        return lhs + rhs
+    }
+    
+    func add(_ args: [Int]) -> Int {
+        return args.reduce(0, +)
+    }
+    
+    func add(lhs: (Int, Int), rhs: (Int, Int)) -> (Int, Int) {
+        return (lhs.0 + rhs.0, lhs.1 + rhs.1)
+    }
+    
+    func add(lhs: [String : Int], rhs: [String : Int]) -> [String : Int] {
+        var res: [String : Int] = [:]
+        
+        for (key, value) in lhs {
+            res[key] = (res[key] ?? 0) + value
+        }
+        
+        for (key, value) in rhs {
+            res[key] = (res[key] ?? 0) + value
+        }
+        
+        return res
+    }
+    
+    func subtract(lhs: Int, rhs: Int) -> Int {
+        return lhs - rhs
+    }
+    
+    func subtract(lhs: (Int, Int), rhs: (Int, Int)) -> (Int, Int) {
+        return (lhs.0 - rhs.0, lhs.1 - rhs.1)
+    }
+    
+    func subtract(lhs: [String : Int], rhs: [String : Int]) -> [String : Int] {
+        var res: [String : Int] = [:]
+        
+        for (key, value) in lhs {
+            if let val = res[key] {
+                res[key] = res[key]! - value
+            } else {
+                res[key] = value
+            }
+        }
+        
+        for (key, value) in rhs {
+            if let val = res[key] {
+                res[key] = res[key]! - value
+            } else {
+                res[key] = value
+            }
+        }
+        
+        return res
+    }
+    
+    func multiply(lhs: Int, rhs: Int) -> Int {
+        return lhs * rhs
+    }
+    
+    func multiply(_ args: [Int]) -> Int {
+        if (args.count == 0) {
+            return 0
+        }
+        
+        return args.reduce(1, *)
+    }
+    
+    func divide(lhs: Int, rhs: Int) -> Int {
+        return lhs / rhs
+    }
+    
+    func mathOp(lhs: Int, rhs: Int, op: (Int, Int) -> Int) -> Int {
+        return op(lhs, rhs)
+    }
+    
+    func mathOp(args: [Int], beg: Int, op: (Int, Int) -> Int) -> Int {
+        return args.reduce(beg, op)
+    }
+    
+    func count(_ args: [Int]) -> Int {
+        return args.count
+    }
+    
+    func avg(_ args: [Int]) -> Double {
+        let count = args.count
+        if (count == 0) {
+            return 0
+        }
+        
+        let sum = args.reduce(0, +)
+        return Double(sum) / Double(count)
+    }
+    
 }
 
 //: Don't change the name of this object (`calc`); it's used in all the tests.
@@ -44,6 +139,22 @@ let calc = Calculator()
 
 // ===== Your tests go here
 
+// Test 1: check empty array in add returns 0
+calc.add([]) == 0
+
+// Test 2: check empty array in avg returns 0
+calc.avg([]) == 0
+
+// Test 3: check empty array in multiply returns 0
+calc.multiply([]) == 0
+
+// Test 4: check add maps with different keys returns map with all keys
+let map1 = ["x": -2, "y": 9]
+let map2 = ["y": -2, "z": 4]
+calc.add(lhs: map1, rhs: map2) == ["x": -2, "y": 7, "z": 4]
+
+// Test 5: check avg returns double
+calc.avg([2, 2, 3, 4, 5]) == 3.2
 //: ---
 //: ## Test code block
 //: Do not modify the code in this section
@@ -52,7 +163,7 @@ calc.subtract(lhs: 2, rhs: 2) == 0
 calc.multiply(lhs: 2, rhs: 2) == 4
 calc.divide(lhs: 2, rhs: 2) == 1
 
-calc.mathOp(lhs: 5, rhs: 5, op: { (lhs: Int, rhs: Int) -> Int in (lhs + rjs) + (lhs * rhs) }) == 35
+calc.mathOp(lhs: 5, rhs: 5, op: { (lhs: Int, rhs: Int) -> Int in (lhs + rhs) + (lhs * rhs) }) == 35
     // This style is one way of writing an anonymous function
 calc.mathOp(lhs: 10, rhs: -5, op: { ($0 + $1) + ($0 - $1) }) == 20
     // This is the second, more terse, style; either works
